@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pos;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Product;
@@ -33,6 +34,6 @@ class DashboardController extends Controller
             ->get();
 
         // tampilkan data ke view
-        return view('dashboard.index', compact('totalCategory', 'totalProduct', 'totalCustomer', 'totalTransaction', 'transactions'));
+        return view('pos.dashboard.index', compact('totalCategory', 'totalProduct', 'totalCustomer', 'totalTransaction', 'transactions'));
     }
 }

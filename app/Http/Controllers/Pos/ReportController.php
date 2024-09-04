@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pos;
 
+use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class ReportController extends Controller
     public function index()
     {
         // tampilkan view
-        return view('report.index');
+        return view('pos.report.index');
     }
 
     /**
@@ -40,14 +41,14 @@ class ReportController extends Controller
             ->get();
 
         // tampilkan data ke view
-        return view('report.index', compact('transactions'));
+        return view('pos.report.index', compact('transactions'));
     }
 
     /**
      * print (PDF)
      */
     public function print($startDate, $endDate)
-    {   
+    {
         // menampilkan data berdasarkan filter
         $transactions = Transaction::with('customer:id,name', 'product:id,name,price')
             ->whereBetween('date', [$startDate, $endDate])
@@ -55,7 +56,7 @@ class ReportController extends Controller
             ->get();
 
         // load view PDF
-        $pdf = Pdf::loadview('report.print', compact('transactions'))->setPaper('a4', 'landscape');
+        $pdf = Pdf::loadview('pos.report.print', compact('transactions'))->setPaper('a4', 'landscape');
         // tampilkan ke browser
         return $pdf->stream('Transactions.pdf');
     }

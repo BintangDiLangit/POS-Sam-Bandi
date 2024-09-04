@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pos;
 
+use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -41,7 +42,7 @@ class TransactionController extends Controller
         }
 
         // tampilkan data ke view
-        return view('transactions.index', compact('transactions'))->with('i', ($request->input('page', 1) - 1) * $pagination);
+        return view('pos.transactions.index', compact('transactions'))->with('i', ($request->input('page', 1) - 1) * $pagination);
     }
 
     /**
@@ -55,7 +56,7 @@ class TransactionController extends Controller
         $products = Product::get(['id', 'name', 'price']);
 
         // tampilkan form add data
-        return view('transactions.create', compact('customers', 'products'));
+        return view('pos.transactions.create', compact('customers', 'products'));
     }
 
     /**
@@ -72,17 +73,20 @@ class TransactionController extends Controller
             'total'    => 'required'
         ]);
 
+        $product = Product::find($request->product);
+
         // create data
         Transaction::create([
             'date'        => $request->date,
             'customer_id' => $request->customer,
-            'product_id'  => $request->product,
+            'product_id'  => $product->id,
+            'price'       => $product->price,
             'qty'         => $request->qty,
-            'total'       => str_replace('.', '', $request->total)
+            'total'       => str_replace(',', '', $request->total)
         ]);
 
         // redirect ke halaman index dan tampilkan pesan berhasil simpan data
-        return redirect()->route('transactions.index')->with(['success' => 'The new transaction has been saved.']);
+        return redirect()->route('pos.transactions.index')->with(['success' => 'The new transaction has been saved.']);
     }
 
     /**
@@ -98,7 +102,7 @@ class TransactionController extends Controller
         $products = Product::get(['id', 'name', 'price']);
 
         // tampilkan form edit data
-        return view('transactions.edit', compact('transaction', 'customers', 'products'));
+        return view('pos.transactions.edit', compact('transaction', 'customers', 'products'));
     }
 
     /**
@@ -118,17 +122,20 @@ class TransactionController extends Controller
         // get data by ID
         $transaction = Transaction::findOrFail($id);
 
+        $product = Product::find($request->product);
+
         // update data
         $transaction->update([
             'date'        => $request->date,
             'customer_id' => $request->customer,
-            'product_id'  => $request->product,
+            'product_id'  => $product->id,
+            'price'       => $product->price,
             'qty'         => $request->qty,
-            'total'       => str_replace('.', '', $request->total)
+            'total'       => str_replace(',', '', $request->total)
         ]);
 
         // redirect ke halaman index dan tampilkan pesan berhasil ubah data
-        return redirect()->route('transactions.index')->with(['success' => 'The transaction has been updated.']);
+        return redirect()->route('pos.transactions.index')->with(['success' => 'The transaction has been updated.']);
     }
 
     /**
@@ -143,6 +150,6 @@ class TransactionController extends Controller
         $transaction->delete();
 
         // redirect ke halaman index dan tampilkan pesan berhasil hapus data
-        return redirect()->route('transactions.index')->with(['success' => 'The transaction has been deleted!']);
+        return redirect()->route('pos.transactions.index')->with(['success' => 'The transaction has been deleted!']);
     }
 }

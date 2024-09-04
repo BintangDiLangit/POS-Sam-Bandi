@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pos;
 
-use App\Models\Customer;
+use App\Http\Controllers\Controller;
+use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-class CustomerController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,19 +20,19 @@ class CustomerController extends Controller
 
         if ($request->search) {
             // menampilkan pencarian data
-            $customers = Customer::select('id', 'name', 'address', 'phone')
-                ->whereAny(['name', 'address', 'phone'], 'LIKE', '%' . $request->search . '%')
+            $categories = Category::select('id', 'name')
+                ->where('name', 'LIKE', '%' . $request->search . '%')
                 ->paginate($pagination)
                 ->withQueryString();
         } else {
             // menampilkan semua data
-            $customers = Customer::select('id', 'name', 'address', 'phone')
+            $categories = Category::select('id', 'name')
                 ->latest()
                 ->paginate($pagination);
         }
 
         // tampilkan data ke view
-        return view('customers.index', compact('customers'))->with('i', ($request->input('page', 1) - 1) * $pagination);
+        return view('pos.categories.index', compact('categories'))->with('i', ($request->input('page', 1) - 1) * $pagination);
     }
 
     /**
@@ -40,7 +41,7 @@ class CustomerController extends Controller
     public function create(): View
     {
         // tampilkan form add data
-        return view('customers.create');
+        return view('pos.categories.create');
     }
 
     /**
@@ -50,20 +51,16 @@ class CustomerController extends Controller
     {
         // validasi form
         $request->validate([
-            'name'    => 'required',
-            'address' => 'required',
-            'phone'   => 'required|max:13|unique:customers'
+            'name' => 'required|unique:categories'
         ]);
 
         // create data
-        Customer::create([
-            'name'    => $request->name,
-            'address' => $request->address,
-            'phone'   => $request->phone
+        Category::create([
+            'name' => $request->name
         ]);
 
         // redirect ke halaman index dan tampilkan pesan berhasil simpan data
-        return redirect()->route('customers.index')->with(['success' => 'The new customer has been saved.']);
+        return redirect()->route('pos.categories.index')->with(['success' => 'The new category has been saved.']);
     }
 
     /**
@@ -72,10 +69,10 @@ class CustomerController extends Controller
     public function edit(string $id): View
     {
         // get data by ID
-        $customer = Customer::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         // tampilkan form edit data
-        return view('customers.edit', compact('customer'));
+        return view('pos.categories.edit', compact('category'));
     }
 
     /**
@@ -85,23 +82,19 @@ class CustomerController extends Controller
     {
         // validasi form
         $request->validate([
-            'name'    => 'required',
-            'address' => 'required',
-            'phone'   => 'required|max:13|unique:customers,phone,' . $id
+            'name' => 'required|unique:categories,name,' . $id
         ]);
 
         // get data by ID
-        $customer = Customer::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         // update data
-        $customer->update([
-            'name'    => $request->name,
-            'address' => $request->address,
-            'phone'   => $request->phone
+        $category->update([
+            'name' => $request->name
         ]);
 
         // redirect ke halaman index dan tampilkan pesan berhasil ubah data
-        return redirect()->route('customers.index')->with(['success' => 'The customer has been updated.']);
+        return redirect()->route('pos.categories.index')->with(['success' => 'The category has been updated.']);
     }
 
     /**
@@ -110,12 +103,12 @@ class CustomerController extends Controller
     public function destroy($id): RedirectResponse
     {
         // get data by ID
-        $customer = Customer::findOrFail($id);
+        $category = Category::findOrFail($id);
 
         // delete data
-        $customer->delete();
+        $category->delete();
 
         // redirect ke halaman index dan tampilkan pesan berhasil hapus data
-        return redirect()->route('customers.index')->with(['success' => 'The customer has been deleted!']);
+        return redirect()->route('pos.categories.index')->with(['success' => 'The category has been deleted!']);
     }
 }

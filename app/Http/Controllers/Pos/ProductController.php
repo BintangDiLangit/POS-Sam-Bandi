@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Pos;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
@@ -33,7 +34,7 @@ class ProductController extends Controller
         }
 
         // tampilkan data ke view
-        return view('products.index', compact('products'))->with('i', ($request->input('page', 1) - 1) * $pagination);
+        return view('pos.products.index', compact('products'))->with('i', ($request->input('page', 1) - 1) * $pagination);
     }
 
     /**
@@ -45,7 +46,7 @@ class ProductController extends Controller
         $categories = Category::get(['id', 'name']);
 
         // tampilkan form add data
-        return view('products.create', compact('categories'));
+        return view('pos.products.create', compact('categories'));
     }
 
     /**
@@ -76,7 +77,7 @@ class ProductController extends Controller
         ]);
 
         // redirect ke halaman index dan tampilkan pesan berhasil simpan data
-        return redirect()->route('products.index')->with(['success' => 'The new product has been saved.']);
+        return redirect()->route('pos.products.index')->with(['success' => 'The new product has been saved.']);
     }
 
     /**
@@ -88,7 +89,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         // tampilkan form detail data
-        return view('products.show', compact('product'));
+        return view('pos.products.show', compact('product'));
     }
 
     /**
@@ -102,7 +103,7 @@ class ProductController extends Controller
         $categories = Category::get(['id', 'name']);
 
         // tampilkan form edit data
-        return view('products.edit', compact('product', 'categories'));
+        return view('pos.products.edit', compact('product', 'categories'));
     }
 
     /**
@@ -152,7 +153,7 @@ class ProductController extends Controller
         }
 
         // redirect ke halaman index dan tampilkan pesan berhasil ubah data
-        return redirect()->route('products.index')->with(['success' => 'The product has been updated.']);
+        return redirect()->route('pos.products.index')->with(['success' => 'The product has been updated.']);
     }
 
     /**
@@ -170,6 +171,6 @@ class ProductController extends Controller
         $product->delete();
 
         // redirect ke halaman index dan tampilkan pesan berhasil hapus data
-        return redirect()->route('products.index')->with(['success' => 'The product has been deleted!']);
+        return redirect()->route('pos.products.index')->with(['success' => 'The product has been deleted!']);
     }
 }

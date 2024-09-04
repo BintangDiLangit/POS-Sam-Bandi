@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->date('date');
-            $table->foreignId('customer_id')->constrained();
-            $table->foreignId('product_id')->constrained();
+            $table->bigInteger('customer_id')->nullable();
+            $table->bigInteger('product_id')->nullable();
+            $table->integer('price');
             $table->integer('qty');
-            $table->bigInteger('total');
+            $table->string('total');
             $table->timestamps();
         });
     }

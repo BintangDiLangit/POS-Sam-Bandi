@@ -1,17 +1,20 @@
 <x-app-layout>
     {{-- Page Title --}}
-    <x-page-title>Add Transaction</x-page-title>
+    <x-page-title>Edit Transaction</x-page-title>
 
     <div class="bg-white rounded-2 shadow-sm p-4 mb-5">
-        {{-- form add data --}}
-        <form action="{{ route('transactions.store') }}" method="POST" enctype="multipart/form-data">
+        {{-- form edit data --}}
+        <form action="{{ route('pos.transactions.update', $transaction->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="row">
                 <div class="col-lg-6">
                     <div class="mb-3">
                         <label class="form-label">Date <span class="text-danger">*</span></label>
-                        <input type="text" name="date" class="form-control datepicker @error('date') is-invalid @enderror" value="{{ old('date') }}" autocomplete="off">
-                        
+                        <input type="text" name="date"
+                            class="form-control datepicker @error('date') is-invalid @enderror"
+                            value="{{ old('date', $transaction->date) }}" autocomplete="off">
+
                         {{-- pesan error untuk date --}}
                         @error('date')
                             <div class="alert alert-danger mt-2">
@@ -24,10 +27,14 @@
 
                     <div class="mb-3">
                         <label class="form-label">Customer <span class="text-danger">*</span></label>
-                        <select name="customer" class="form-select select2-single @error('customer') is-invalid @enderror" autocomplete="off">
-                            <option selected disabled value="">- Select customer -</option>
+                        <select name="customer"
+                            class="form-select select2-single @error('customer') is-invalid @enderror"
+                            autocomplete="off">
+                            <option disabled value="">- Select customer -</option>
                             @foreach ($customers as $customer)
-                                <option {{ old('customer') == $customer->id ? 'selected' : '' }} value="{{ $customer->id }}">{{ $customer->name }}</option>
+                                <option
+                                    {{ old('customer', $transaction->customer_id) == $customer->id ? 'selected' : '' }}
+                                    value="{{ $customer->id }}">{{ $customer->name }}</option>
                             @endforeach
                         </select>
 
@@ -41,10 +48,15 @@
 
                     <div class="mb-3">
                         <label class="form-label">Product <span class="text-danger">*</span></label>
-                        <select id="product" name="product" class="form-select select2-single @error('product') is-invalid @enderror" autocomplete="off">
-                            <option selected disabled value="">- Select product -</option>
+                        <select id="product" name="product"
+                            class="form-select select2-single @error('product') is-invalid @enderror"
+                            autocomplete="off">
+                            <option disabled value="">- Select product -</option>
                             @foreach ($products as $product)
-                                <option {{ old('product') == $product->id ? 'selected' : '' }} value="{{ $product->id }}" data-price="{{ number_format($product->price, 0, '', '.') }}">{{ $product->name }}</option>
+                                <option {{ old('product', $transaction->product_id) == $product->id ? 'selected' : '' }}
+                                    value="{{ $product->id }}"
+                                    data-price="{{ number_format($product->price, 0, '', '.') }}">{{ $product->name }}
+                                </option>
                             @endforeach
                         </select>
 
@@ -60,9 +72,12 @@
                         <label class="form-label">Price <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text">Rp</span>
-                            <input type="text" id="price" name="price" class="form-control mask-number @error('price') is-invalid @enderror" value="{{ old('price') }}" readonly>
+                            <input type="text" id="price" name="price"
+                                class="form-control mask-number @error('price') is-invalid @enderror"
+                                value="{{ old('price', number_format($transaction->product->price, 0, '', '.')) }}"
+                                readonly>
                         </div>
-                        
+
                         {{-- pesan error untuk price --}}
                         @error('price')
                             <div class="alert alert-danger mt-2">
@@ -75,8 +90,10 @@
 
                     <div class="mb-3">
                         <label class="form-label">Qty <span class="text-danger">*</span></label>
-                        <input type="number" id="qty" name="qty" class="form-control @error('qty') is-invalid @enderror" value="{{ old('qty') }}" autocomplete="off">
-                        
+                        <input type="number" id="qty" name="qty"
+                            class="form-control @error('qty') is-invalid @enderror"
+                            value="{{ old('qty', $transaction->qty) }}" autocomplete="off">
+
                         {{-- pesan error untuk qty --}}
                         @error('qty')
                             <div class="alert alert-danger mt-2">
@@ -89,9 +106,11 @@
                         <label class="form-label">Total <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text">Rp</span>
-                            <input type="text" id="total" name="total" class="form-control mask-number @error('total') is-invalid @enderror" value="{{ old('total') }}" readonly>
+                            <input type="text" id="total" name="total"
+                                class="form-control mask-number @error('total') is-invalid @enderror"
+                                value="{{ old('total', number_format($transaction->total, 0, '', '.')) }}" readonly>
                         </div>
-                        
+
                         {{-- pesan error untuk total --}}
                         @error('total')
                             <div class="alert alert-danger mt-2">
@@ -101,13 +120,13 @@
                     </div>
                 </div>
             </div>
-    
+
             <div class="pt-4 pb-2 mt-5 border-top">
                 <div class="d-grid gap-3 d-sm-flex justify-content-md-start pt-1">
-                    {{-- button simpan data --}}
-                    <button type="submit" class="btn btn-primary py-2 px-4">Save</button>
+                    {{-- button update data --}}
+                    <button type="submit" class="btn btn-primary py-2 px-3">Update</button>
                     {{-- button kembali ke halaman index --}}
-                    <a href="{{ route('transactions.index') }}" class="btn btn-secondary py-2 px-3">Cancel</a>
+                    <a href="{{ route('pos.transactions.index') }}" class="btn btn-secondary py-2 px-3">Cancel</a>
                 </div>
             </div>
         </form>

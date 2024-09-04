@@ -9,7 +9,7 @@
     <meta name="author" content="Indra Styawantoro">
 
     {{-- Title --}}
-    <title>Aplikasi POS Sam Bandi</title>
+    <title>Sam Bandi Nusantara</title>
 
     {{-- Favicon icon --}}
     <link rel="shortcut icon" href="{{ asset('images/favicon.ico') }}" type="image/x-icon">

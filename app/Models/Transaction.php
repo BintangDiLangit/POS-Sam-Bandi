@@ -19,6 +19,7 @@ class Transaction extends Model
         'date',
         'customer_id',
         'product_id',
+        'price',
         'qty',
         'total',
     ];
